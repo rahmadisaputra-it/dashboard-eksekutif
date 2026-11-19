@@ -137,42 +137,61 @@ class Database
         }
         $this->appTried = true;
 
-        $fp = @fsockopen('127.0.0.1', 3306, $errno, $errstr, 0.25);
+        $appHost = getenv('APP_DB_HOST');
+        $host    = (is_string($appHost) && trim($appHost) !== '') ? trim($appHost) : '127.0.0.1';
+
+        $checkHost = ($host === 'localhost') ? '127.0.0.1' : $host;
+        $fp = @fsockopen($checkHost, 3306, $errno, $errstr, 0.5);
         if ($fp === false) {
             return null;
         }
         @fclose($fp);
 
-        try {
-            $this->appPdo = new PDO(
-                'mysql:host=127.0.0.1;dbname=' . self::APP_DB_NAME . ';charset=utf8mb4',
-                $this->dbUser,
-                $this->dbPass,
-                [
-                    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                    PDO::ATTR_EMULATE_PREPARES   => false,
-                    PDO::ATTR_TIMEOUT            => 3,
-                ]
-            );
-            Setup::ensureAppSchema($this->appPdo);
-        } catch (PDOException $e) {
-            // Jika database dashboard_eksekutif belum dibuat, jalankan Setup::run()
+        // Daftar kandidat kredensial untuk database mandiri dashboard_eksekutif
+        $credCandidates = [];
+        $envUser = getenv('APP_DB_USER');
+        $envPass = getenv('APP_DB_PASS');
+        if (is_string($envUser) && trim($envUser) !== '') {
+            $credCandidates[] = [trim($envUser), is_string($envPass) ? $envPass : ''];
+        }
+        $credCandidates[] = ['root', ''];
+        if ($this->dbUser !== 'root' || $this->dbPass !== '') {
+            $credCandidates[] = [$this->dbUser, $this->dbPass];
+        }
+
+        $pdoOpts = [
+            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES   => false,
+            PDO::ATTR_TIMEOUT            => 3,
+        ];
+
+        foreach ($credCandidates as [$candUser, $candPass]) {
             try {
-                Setup::run('127.0.0.1', $this->dbUser, $this->dbPass);
                 $this->appPdo = new PDO(
-                    'mysql:host=127.0.0.1;dbname=' . self::APP_DB_NAME . ';charset=utf8mb4',
-                    $this->dbUser,
-                    $this->dbPass,
-                    [
-                        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-                        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                        PDO::ATTR_EMULATE_PREPARES   => false,
-                        PDO::ATTR_TIMEOUT            => 3,
-                    ]
+                    "mysql:host={$host};dbname=" . self::APP_DB_NAME . ';charset=utf8mb4',
+                    $candUser,
+                    $candPass,
+                    $pdoOpts
                 );
-            } catch (Throwable $ex) {
-                $this->appPdo = null;
+                Setup::ensureAppSchema($this->appPdo);
+                return $this->appPdo;
+            } catch (PDOException $e) {
+                // Jika database dashboard_eksekutif belum ada, coba jalankan Setup::run()
+                try {
+                    $setupRes = Setup::run($host, $candUser, $candPass);
+                    if (!empty($setupRes['success'])) {
+                        $this->appPdo = new PDO(
+                            "mysql:host={$host};dbname=" . self::APP_DB_NAME . ';charset=utf8mb4',
+                            $candUser,
+                            $candPass,
+                            $pdoOpts
+                        );
+                        return $this->appPdo;
+                    }
+                } catch (Throwable $ex) {
+                    $this->appPdo = null;
+                }
             }
         }
 
