@@ -1,0 +1,38 @@
+# Storage Cache Files (Generated at Runtime)
+storage/cache/*.json
+!storage/cache/.gitkeep
+
+# Uploaded Hospital Logos (User-Specific Runtime Uploads)
+assets/images/uploads/*
+!assets/images/uploads/.gitkeep
+
+# Local Development & Rules
+GEMINI.md
+DESIGN.md
+CLAUDE.md
+AGENTS.md
+docs/
+.gemini/
+.claude/
+.agents/
+.cursor/
+
+# IDE and Editor files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS Generated
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+# Temporary & Log files
+*.log
+scratch/

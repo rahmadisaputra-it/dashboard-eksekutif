@@ -1,0 +1,385 @@
+/* ==========================================================================
+   SIMRS PERMATA — CLEAN ENTERPRISE UI SYSTEM
+   RSU Permata Madina Panyabungan (PHP 8.0.8 Native Modular MVC)
+   Zero-Bevel, Zero-Gimmick, High-Craft Professional SaaS Interface
+   ========================================================================== */
+
+:root {
+  --bg-canvas: #f8fafc;
+  --bg-surface: #ffffff;
+  --border-subtle: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --primary-blue: #1d4ed8;
+  --primary-blue-hover: #1e40af;
+  --primary-blue-soft: #eff6ff;
+  --text-strong: #0f172a;
+  --text-body: #334155;
+  --text-muted: #64748b;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: #1e293b;
+  background-color: var(--bg-canvas);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Defensive CSS: Cegah gambar meledak jika CSS utility lambat / offline */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.login-logo {
+  width: 56px !important;
+  height: 56px !important;
+  max-width: 56px !important;
+  max-height: 56px !important;
+  object-fit: contain !important;
+}
+
+/* --------------------------------------------------------------------------
+   1. CLEAN NEUTRAL WORKSPACE CANVAS (NO BEVEL, NO TEXTURE GIMMICKS)
+   -------------------------------------------------------------------------- */
+.canvas-architectural,
+.canvas-clean {
+  background-color: #f8fafc;
+}
+
+/* --------------------------------------------------------------------------
+   2. UNIFIED FULL-BLEED APP SHELL (SIDEBAR MENYATU + MAIN WORKSPACE)
+   -------------------------------------------------------------------------- */
+.permata-shell {
+  min-height: 100vh;
+  display: flex;
+  width: 100%;
+  background-color: #f8fafc;
+}
+
+/* Sidebar Kiri: Putih Bersih, Garis Batas 1px Halus di Kanan */
+.permata-sidebar {
+  width: 256px;
+  flex-shrink: 0;
+  background-color: #ffffff;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px 16px;
+}
+
+/* Area Konten Utama Kanan: Bersih, Lega, Fokus ke Data */
+.permata-main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 28px 32px 20px 32px;
+  background-color: #f8fafc;
+}
+
+/* --------------------------------------------------------------------------
+   3. CLEAN FLAT CARDS & SURFACES (.permata-card / .bevel-card)
+   Permukaan putih bersih, border 1px tipis, tanpa efek timbul/cekung 3D.
+   -------------------------------------------------------------------------- */
+.permata-card,
+.bevel-card,
+.bevel-slab:not(.permata-sidebar):not(.permata-main) {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px 0 rgba(15, 23, 42, 0.03);
+}
+
+/* Pill / Badge Info Datar Halus */
+.permata-pill,
+.bevel-inset {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+}
+
+/* --------------------------------------------------------------------------
+   4. NAVIGASI SIDEBAR MINIMALIS (SOFT TINT TANPA BORDER 3D)
+   -------------------------------------------------------------------------- */
+.nav-bevel-active,
+.nav-item-active {
+  background-color: #eff6ff;
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
+.nav-bevel-idle,
+.nav-item-idle {
+  color: #475569;
+  font-weight: 500;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.nav-bevel-idle:hover,
+.nav-item-idle:hover {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+/* --------------------------------------------------------------------------
+   5. TOMBOL & INPUT PROFESIONAL (SOLID BLUE & FLAT BORDER)
+   -------------------------------------------------------------------------- */
+.btn-bevel-primary,
+.btn-primary {
+  background-color: #1d4ed8;
+  color: #ffffff;
+  border: 1px solid #1e40af;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+  transition: background-color 120ms ease;
+}
+
+.btn-bevel-primary:hover,
+.btn-primary:hover {
+  background-color: #1e40af;
+}
+
+.btn-bevel-light,
+.btn-secondary {
+  background-color: #ffffff;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px 0 rgba(15, 23, 42, 0.02);
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.btn-bevel-light:hover,
+.btn-secondary:hover {
+  background-color: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+/* Input Form Bersih & Anti-Autofill Tint Biru Browser */
+.bevel-input,
+.permata-input {
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  color: #0f172a;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.bevel-input::placeholder,
+.permata-input::placeholder {
+  color: #94a3b8;
+  font-family: inherit;
+  letter-spacing: 0;
+}
+
+.bevel-input:focus,
+.permata-input:focus {
+  outline: none;
+  border-color: #1d4ed8;
+  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.10);
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #0f172a !important;
+  -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* --------------------------------------------------------------------------
+   6. TIPOGRAFI ANGKA TABULAR (.font-num)
+   Menggunakan keluarga font Sans-Serif utama yang sama (inherit) dengan fitur
+   tabular-nums agar lebar digit sejajar rapi tanpa terlihat kaku seperti terminal.
+   -------------------------------------------------------------------------- */
+.font-num {
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* --------------------------------------------------------------------------
+   7. TABEL EKSEKUTIF BERSIH & PRESISI
+   -------------------------------------------------------------------------- */
+.permata-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.permata-table thead tr {
+  background-color: #f8fafc;
+  border-bottom: 1px solid #cbd5e1;
+}
+
+.permata-table th {
+  padding: 10px 14px;
+  font-weight: 600;
+  color: #334155;
+  text-transform: none;
+}
+
+.permata-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #1e293b;
+}
+
+.permata-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.permata-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+/* --------------------------------------------------------------------------
+   8. RESPONSIVE & PRINT STANDARDS (KARS PARIPURNA — A4 LANDSCAPE)
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .permata-shell {
+    flex-direction: column;
+  }
+  .permata-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .permata-main {
+    padding: 20px 16px;
+  }
+}
+
+.print-only {
+  display: none;
+}
+
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 5mm;
+  }
+  html, body, .canvas-architectural, .canvas-clean {
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .permata-shell,
+  .permata-main,
+  .print-block,
+  .permata-card:not(.no-print),
+  .bevel-slab:not(.no-print):not(.permata-sidebar),
+  .bevel-card:not(.no-print),
+  .print-table-wrapper {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: none !important;
+    height: auto !important;
+    overflow: visible !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background: #ffffff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .no-print,
+  .permata-sidebar,
+  aside.permata-sidebar,
+  header.no-print,
+  footer.no-print,
+  section.no-print,
+  div.no-print {
+    display: none !important;
+  }
+  .permata-table {
+    width: 100% !important;
+    max-width: 100% !important;
+    table-layout: auto !important;
+    border-collapse: collapse !important;
+    font-size: 5.5pt !important;
+    line-height: 1.15 !important;
+    white-space: normal !important;
+  }
+  .permata-table thead {
+    position: static !important;
+    display: table-header-group !important;
+    box-shadow: none !important;
+  }
+  .permata-table tfoot {
+    display: table-row-group !important;
+  }
+  .permata-table tr {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  .permata-table th,
+  .permata-table td {
+    position: static !important;
+    left: auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    padding: 1.5px 2px !important;
+    border: 0.5pt solid #64748b !important;
+    font-size: 5.5pt !important;
+    line-height: 1.15 !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+  }
+  .permata-table th *,
+  .permata-table td * {
+    font-size: inherit !important;
+    line-height: inherit !important;
+    white-space: inherit !important;
+  }
+  .permata-table td div + div {
+    font-size: 4.8pt !important;
+    color: #475569 !important;
+  }
+  .permata-table thead tr:nth-child(2) td {
+    font-size: 4.8pt !important;
+  }
+  .permata-table td.text-right.font-num {
+    white-space: nowrap !important;
+    word-break: normal !important;
+  }
+  .permata-table tbody td:nth-child(1) {
+    width: 16px !important;
+    white-space: nowrap !important;
+  }
+  .permata-table tbody td:nth-child(2) {
+    max-width: 95px !important;
+  }
+  .permata-table tbody td:nth-child(3) {
+    white-space: nowrap !important;
+  }
+  .permata-table tbody td:nth-child(4) {
+    max-width: 75px !important;
+  }
+  .permata-table tbody td:nth-child(5) {
+    max-width: 65px !important;
+  }
+  .permata-table tbody td:nth-child(21) {
+    max-width: 56px !important;
+  }
+}
