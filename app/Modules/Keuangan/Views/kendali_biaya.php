@@ -321,7 +321,13 @@ declare(strict_types=1);
               <td class="font-num text-slate-700"><?= e($row['no_rkm_medis']) ?></td>
               <td>
                 <div class="font-medium text-slate-800"><?= e($row['nm_bangsal']) ?></div>
-                <div class="font-num text-xs text-slate-500"><?= e($row['lokasi']) ?></div>
+                <?php
+                  $kdKamarClean   = trim((string) ($row['kd_kamar'] ?? ''));
+                  $nmBangsalClean = trim((string) ($row['nm_bangsal'] ?? ''));
+                  if ($kdKamarClean !== '' && $kdKamarClean !== '-' && strcasecmp($kdKamarClean, $nmBangsalClean) !== 0):
+                ?>
+                  <div class="font-num text-xs text-slate-500"><?= e($kdKamarClean) ?></div>
+                <?php endif; ?>
               </td>
               <td class="font-num text-slate-700 max-w-[160px] truncate" title="<?= e($row['diagnosa_awal'] ?: '-') ?>">
                 <?= e($row['diagnosa_awal'] ?: '-') ?>
