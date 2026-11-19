@@ -9,87 +9,24 @@ use Throwable;
 
 class Database
 {
-    private static ?Database $instance = null;
-    private ?PDO $pdo = null;
-    private bool $connected = false;
-    private string $activeDbName = 'sik_fix';
-    private string $statusMessage = 'Terhubung ke SIMRS Khanza';
+    public const DB_HOST = '127.0.0.1';
+    public const DB_PORT = '3306';
+    public const DB_NAME = 'dashboard_eksekutif';
+    public const DB_USER = 'root';
+    public const DB_PASS = '';
+    public const API_KEY = 'DASHBOARD-EKSEKUTIF-2026-KEY';
 
-    // Database mandiri aplikasi (users, pengaturan RS, log API, snapshot hasil push)
-    public const APP_DB_NAME = 'dashboard_eksekutif';
+    private static ?Database $instance = null;
     private ?PDO $appPdo = null;
     private bool $appTried = false;
-    private string $dbUser = 'root';
-    private string $dbPass = '';
 
     private function __construct()
     {
-        $hosts = ['localhost', '127.0.0.1'];
-        $user  = 'root';
-        $pass  = '';
-        $candidateDbs = ['sik_fix', 'sik'];
-
-        $confPath = dirname(__DIR__, 3) . '/webapps/conf/conf.php';
-        if (is_file($confPath) && is_readable($confPath)) {
-            $raw = (string) file_get_contents($confPath);
-            if (preg_match('/\$db_hostname\s*=\s*["\']([^"\']+)["\']/', $raw, $m)) {
-                array_unshift($hosts, $m[1]);
-                $hosts = array_values(array_unique($hosts));
-            }
-            if (preg_match('/\$db_username\s*=\s*["\']([^"\']*)["\']/', $raw, $m)) {
-                $user = $m[1];
-            }
-            if (preg_match('/\$db_password\s*=\s*["\']([^"\']*)["\']/', $raw, $m)) {
-                $pass = $m[1];
-            }
-            if (preg_match('/\$db_name\s*=\s*["\']([^"\']+)["\']/', $raw, $m)) {
-                array_unshift($candidateDbs, $m[1]);
-                $candidateDbs = array_values(array_unique($candidateDbs));
-            }
-        }
-
-        $this->dbUser = $user;
-        $this->dbPass = $pass;
-
-        foreach ($hosts as $host) {
-            $checkHost = ($host === 'localhost') ? '127.0.0.1' : $host;
-            $fp = @fsockopen($checkHost, 3306, $errno, $errstr, 0.25);
-            if ($fp === false) {
-                continue;
-            }
-            @fclose($fp);
-
-            foreach ($candidateDbs as $dbName) {
-                try {
-                    $dsn = "mysql:host={$host};dbname={$dbName};charset=utf8mb4";
-                    $this->pdo = new PDO($dsn, $user, $pass, [
-                        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-                        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                        PDO::ATTR_EMULATE_PREPARES   => false,
-                        PDO::ATTR_TIMEOUT            => 3,
-                    ]);
-                    $this->connected     = true;
-                    $this->activeDbName  = $dbName;
-                    $this->statusMessage = "Live DB ({$dbName})";
-                    return;
-                } catch (PDOException $e) {
-                    $this->pdo       = null;
-                    $this->connected = false;
-                }
-            }
-        }
-
-        $this->activeDbName  = self::APP_DB_NAME;
-        $this->statusMessage = 'Standalone Mode (API Push)';
     }
 
     public static function getApiKey(): string
     {
-        $envKey = getenv('DASHBOARD_API_KEY') ?: getenv('PERMATA_API_KEY');
-        if (is_string($envKey) && trim($envKey) !== '') {
-            return trim($envKey);
-        }
-        return 'DASHBOARD-EKSEKUTIF-2026-KEY';
+        return self::API_KEY;
     }
 
     public static function isValidApiKey(string $providedKey): bool
@@ -98,15 +35,7 @@ class Database
         if ($providedKey === '') {
             return false;
         }
-        $primaryKey = self::getApiKey();
-        if (hash_equals($primaryKey, $providedKey)) {
-            return true;
-        }
-        // Kompatibilitas mundur dengan key service lama di setting/database.xml
-        if (hash_equals('RSUPM-HFIS-SYNC-2026-KEY', $providedKey)) {
-            return true;
-        }
-        return false;
+        return hash_equals(self::API_KEY, $providedKey);
     }
 
     public static function getInstance(): self
@@ -117,19 +46,11 @@ class Database
         return self::$instance;
     }
 
-    /**
-     * Koneksi ke database Khanza (sik_fix) — digunakan hanya oleh worker pengirim
-     * atau fitur tarik profil instansi dari tabel setting Khanza.
-     */
     public function getConnection(): ?PDO
     {
-        return $this->pdo;
+        return null;
     }
 
-    /**
-     * Koneksi ke database mandiri aplikasi (dashboard_eksekutif).
-     * Otomatis menyiapkan tabel snapshot bila belum ada.
-     */
     public function getAppConnection(): ?PDO
     {
         if ($this->appPdo !== null || $this->appTried) {
@@ -137,70 +58,31 @@ class Database
         }
         $this->appTried = true;
 
-        $appHost = getenv('APP_DB_HOST');
-        $host    = (is_string($appHost) && trim($appHost) !== '') ? trim($appHost) : '127.0.0.1';
-
-        $checkHost = ($host === 'localhost') ? '127.0.0.1' : $host;
-        $fp = @fsockopen($checkHost, 3306, $errno, $errstr, 0.5);
-        if ($fp === false) {
-            return null;
-        }
-        @fclose($fp);
-
-        // Daftar kandidat kredensial untuk database mandiri dashboard_eksekutif
-        $credCandidates = [];
-        $envUser = getenv('APP_DB_USER');
-        $envPass = getenv('APP_DB_PASS');
-        if (is_string($envUser) && trim($envUser) !== '') {
-            $credCandidates[] = [trim($envUser), is_string($envPass) ? $envPass : ''];
-        }
-        $credCandidates[] = ['root', ''];
-        if ($this->dbUser !== 'root' || $this->dbPass !== '') {
-            $credCandidates[] = [$this->dbUser, $this->dbPass];
-        }
-
-        $pdoOpts = [
+        $dsn = 'mysql:host=' . self::DB_HOST . ';port=' . self::DB_PORT . ';dbname=' . self::DB_NAME . ';charset=utf8mb4';
+        $opts = [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES   => false,
             PDO::ATTR_TIMEOUT            => 3,
         ];
 
-        foreach ($credCandidates as [$candUser, $candPass]) {
+        try {
+            $this->appPdo = new PDO($dsn, self::DB_USER, self::DB_PASS, $opts);
+            Setup::ensureAppSchema($this->appPdo);
+        } catch (PDOException $e) {
             try {
-                $this->appPdo = new PDO(
-                    "mysql:host={$host};dbname=" . self::APP_DB_NAME . ';charset=utf8mb4',
-                    $candUser,
-                    $candPass,
-                    $pdoOpts
-                );
-                Setup::ensureAppSchema($this->appPdo);
-                return $this->appPdo;
-            } catch (PDOException $e) {
-                // Jika database dashboard_eksekutif belum ada, coba jalankan Setup::run()
-                try {
-                    $setupRes = Setup::run($host, $candUser, $candPass);
-                    if (!empty($setupRes['success'])) {
-                        $this->appPdo = new PDO(
-                            "mysql:host={$host};dbname=" . self::APP_DB_NAME . ';charset=utf8mb4',
-                            $candUser,
-                            $candPass,
-                            $pdoOpts
-                        );
-                        return $this->appPdo;
-                    }
-                } catch (Throwable $ex) {
-                    $this->appPdo = null;
+                $setup = Setup::run(self::DB_HOST, self::DB_USER, self::DB_PASS, self::DB_NAME, self::DB_PORT);
+                if (!empty($setup['success'])) {
+                    $this->appPdo = new PDO($dsn, self::DB_USER, self::DB_PASS, $opts);
                 }
+            } catch (Throwable $ex) {
+                $this->appPdo = null;
             }
         }
 
         return $this->appPdo;
     }
 
-    /**
-     * Catat log penerimaan push API dari service Khanza ke tabel api_log
-     */
     public static function logApiPush(
         string $jenisData,
         int $totalRecord,
@@ -229,22 +111,21 @@ class Database
                 ':k'  => $keterangan,
             ]);
         } catch (Throwable $e) {
-            // Abaikan kegagalan log agar tidak mengganggu respon API
         }
     }
 
     public function isConnected(): bool
     {
-        return ($this->appPdo !== null) || ($this->connected && $this->pdo !== null);
+        return $this->getAppConnection() !== null;
     }
 
     public function getActiveDbName(): string
     {
-        return self::APP_DB_NAME;
+        return self::DB_NAME;
     }
 
     public function getStatusMessage(): string
     {
-        return $this->statusMessage;
+        return $this->isConnected() ? 'Terhubung (' . self::DB_NAME . ')' : 'Terputus';
     }
 }

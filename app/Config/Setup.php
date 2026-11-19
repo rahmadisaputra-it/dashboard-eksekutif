@@ -260,27 +260,33 @@ class Setup
         }
     }
 
-    public static function run(string $host = '127.0.0.1', string $user = 'root', string $pass = ''): array
-    {
+    public static function run(
+        string $host = '127.0.0.1',
+        string $user = 'root',
+        string $pass = '',
+        string $dbName = 'dashboard_eksekutif',
+        string $port = '3306'
+    ): array {
         $log = [];
+        $safeDb = preg_replace('/[^a-zA-Z0-9_]/', '', $dbName) ?: 'dashboard_eksekutif';
 
         try {
-            $pdoRoot = new PDO("mysql:host={$host};charset=utf8mb4", $user, $pass, [
+            $pdoRoot = new PDO("mysql:host={$host};port={$port};charset=utf8mb4", $user, $pass, [
                 PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             ]);
 
-            $pdoRoot->exec("CREATE DATABASE IF NOT EXISTS `dashboard_eksekutif` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-            $log[] = "Database `dashboard_eksekutif` siap.";
+            $pdoRoot->exec("CREATE DATABASE IF NOT EXISTS `{$safeDb}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+            $log[] = "Database `{$safeDb}` siap.";
 
-            $pdo = new PDO("mysql:host={$host};dbname=dashboard_eksekutif;charset=utf8mb4", $user, $pass, [
+            $pdo = new PDO("mysql:host={$host};port={$port};dbname={$safeDb};charset=utf8mb4", $user, $pass, [
                 PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES   => false,
             ]);
 
             self::ensureAppSchema($pdo);
-            $log[] = "Seluruh tabel mandiri (`users`, `app_settings`, `api_log`, `tarif_inacbg`, `kendali_biaya`, `tempat_tidur`, `jadwal_hfis`, `jam_poliklinik`) siap.";
+            $log[] = "Seluruh tabel mandiri siap.";
 
             return ['success' => true, 'log' => $log];
         } catch (PDOException $e) {
