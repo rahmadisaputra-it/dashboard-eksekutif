@@ -50,7 +50,6 @@ class OperasionalController extends Controller
             'jadwalList'      => $jadwalList,
             'kpi'             => $kpi,
             'poliOptions'     => $poliOptions,
-            'apiKey'          => Database::getApiKey(),
         ]);
     }
 

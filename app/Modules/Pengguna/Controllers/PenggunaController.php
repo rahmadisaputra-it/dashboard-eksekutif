@@ -52,7 +52,6 @@ class PenggunaController extends Controller
             'kpi'              => $kpi,
             'apiLogs'          => $apiLogs,
             'moduleSyncStats'  => $moduleSyncStats,
-            'apiKey'           => \App\Config\Database::getApiKey(),
             'filters'          => $filters,
             'availableModules' => Auth::MODULES,
             'csrfToken'        => Auth::csrfToken(),

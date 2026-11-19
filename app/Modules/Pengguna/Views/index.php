@@ -287,11 +287,6 @@ $availableModules = $availableModules ?? Auth::MODULES;
         Arsitektur Zero Inbound — Server Khanza mengirim data satu arah ke database mandiri <span class="font-num font-medium text-slate-700">dashboard_eksekutif</span>
       </p>
     </div>
-    <div class="flex flex-wrap items-center gap-2 text-[11px]">
-      <span class="px-2.5 py-1 rounded-md bg-slate-100 border border-slate-200 text-slate-600 font-num">
-        Header X-API-KEY: <strong class="text-slate-800"><?= e($apiKey ?? 'DASHBOARD-EKSEKUTIF-2026-KEY') ?></strong>
-      </span>
-    </div>
   </div>
 
   <?php
