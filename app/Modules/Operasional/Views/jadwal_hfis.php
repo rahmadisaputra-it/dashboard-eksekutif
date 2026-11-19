@@ -70,9 +70,6 @@ $waktuSyncText = !empty($lastSync['waktu_sync'])
     </div>
     <div class="mt-3">
       <div class="text-xs font-semibold text-slate-900 font-num truncate"><?= e($waktuSyncText) ?></div>
-      <div class="text-xs text-slate-500 mt-0.5 truncate">
-        Sumber: <span class="text-slate-700"><?= e((string) ($lastSync['pengirim'] ?? 'SIMRS Khanza')) ?></span>
-      </div>
     </div>
   </div>
 </section>
