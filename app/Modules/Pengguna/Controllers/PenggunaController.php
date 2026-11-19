@@ -76,9 +76,7 @@ class PenggunaController extends Controller
             }
 
             $action = (string) ($_POST['action'] ?? 'save_settings');
-            if ($action === 'sync_khanza') {
-                $result = $this->model->syncHospitalFromKhanza();
-            } elseif ($action === 'reset_logo') {
+            if ($action === 'reset_logo') {
                 $result = $this->model->resetHospitalLogo();
             } else {
                 $result = $this->model->updateHospitalSettings($_POST, $_FILES);

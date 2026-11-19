@@ -62,7 +62,6 @@ Melalui menu **Administrasi Sistem → Pengaturan Rumah Sakit** (`index.php?modu
 - **Alamat Lengkap, Kabupaten/Kota, Provinsi, Kontak, Email & Kode PPK BPJS:** Otomatis tercetak pada Kop Surat Laporan dan baris tanggal/kota penandatangan laporan.
 - **Nama Direktur / Pimpinan RS:** Otomatis mengisi blok penandatangan di bagian bawah laporan cetak.
 - **Upload Logo Rumah Sakit & Logo Akreditasi:** Mendukung format PNG, JPG, JPEG, SVG, dan WEBP (maks. 2 MB), lengkap dengan pratinjau langsung (*Live Preview*) Kop Surat Cetak.
-- **Tarik Otomatis dari Tabel `setting` SIMRS Khanza:** Tombol cepat 1-klik untuk mengisi profil RS otomatis jika database Khanza terhubung di server yang sama.
 
 ---
 

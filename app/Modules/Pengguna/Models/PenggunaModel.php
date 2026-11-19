@@ -554,49 +554,6 @@ class PenggunaModel
     }
 
     /**
-     * Tarik profil instansi otomatis dari tabel `setting` SIMRS Khanza bila koneksi tersedia
-     *
-     * @return array{ok: bool, message: string}
-     */
-    public function syncHospitalFromKhanza(): array
-    {
-        if ($this->pdo === null) {
-            return ['ok' => false, 'message' => 'Koneksi database mandiri tidak tersedia.'];
-        }
-
-        $khanzaPdo = Database::getInstance()->getConnection();
-        if ($khanzaPdo === null) {
-            return ['ok' => false, 'message' => 'Database SIMRS Khanza tidak terhubung langsung di server ini. Silakan isi profil rumah sakit secara manual pada formulir di bawah.'];
-        }
-
-        try {
-            $stmt = $khanzaPdo->query(
-                'SELECT nama_instansi, alamat_instansi, kabupaten, propinsi, kontak, email, kode_ppk
-                 FROM setting LIMIT 1'
-            );
-            $row = $stmt ? $stmt->fetch() : false;
-            if (!is_array($row) || empty($row['nama_instansi'])) {
-                return ['ok' => false, 'message' => 'Tabel setting di database SIMRS Khanza kosong.'];
-            }
-
-            $current = $this->getHospitalSettings();
-            return $this->updateHospitalSettings([
-                'nama_aplikasi'   => $current['nama_aplikasi'] ?? 'Dashboard Eksekutif',
-                'nama_instansi'   => $row['nama_instansi'] ?? '',
-                'alamat_instansi' => $row['alamat_instansi'] ?? '-',
-                'kabupaten'       => $row['kabupaten'] ?? '-',
-                'propinsi'        => $row['propinsi'] ?? '-',
-                'kontak'          => $row['kontak'] ?? '-',
-                'email'           => $row['email'] ?? '-',
-                'kode_ppk'        => $row['kode_ppk'] ?? '-',
-                'nama_direktur'   => $current['nama_direktur'] ?? '( ................................................. )',
-            ]);
-        } catch (Throwable $e) {
-            return ['ok' => false, 'message' => 'Gagal menarik data dari tabel setting SIMRS Khanza.'];
-        }
-    }
-
-    /**
      * Reset logo kembali ke ikon vector default
      */
     public function resetHospitalLogo(): array

@@ -36,32 +36,12 @@ $logoAkreditasi = (string) ($settings['logo_akreditasi'] ?? '');
 
 <!-- 1. PRATINJAU (LIVE PREVIEW) KOP SURAT CETAK LAPORAN & IDENTITAS APLIKASI -->
 <section class="permata-card p-5">
-  <div class="flex flex-wrap items-center justify-between gap-3 pb-4 mb-4 border-b border-slate-100">
-    <div>
-      <h3 class="text-sm font-semibold text-slate-900">Pratinjau Kop Surat Cetak Laporan &amp; Identitas Aplikasi</h3>
-      <p class="text-xs text-slate-500 mt-0.5">
-        Tampilan di bawah ini adalah pratinjau kop surat resmi saat mencetak laporan serta identitas pada halaman Login &amp; Sidebar:
-        <strong class="text-slate-700"><?= e($appName) ?> — <?= e($rsName) ?></strong>
-      </p>
-    </div>
-
-    <div class="flex flex-wrap items-center gap-2">
-      <!-- Form Tarik Otomatis dari Tabel setting SIMRS Khanza -->
-      <form method="POST" action="index.php?module=pengguna&amp;page=pengaturan-rs">
-        <input type="hidden" name="csrf_token" value="<?= e($csrfToken ?? '') ?>">
-        <input type="hidden" name="action" value="sync_khanza">
-        <button
-          type="submit"
-          class="btn-secondary px-3.5 py-2 min-h-[36px] text-xs font-medium inline-flex items-center gap-2 cursor-pointer"
-          title="Ambil nama, alamat, kontak, email, dan kode PPK langsung dari tabel setting SIMRS Khanza jika terhubung"
-        >
-          <svg class="w-3.5 h-3.5 text-blue-700" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/>
-          </svg>
-          <span>Tarik dari Tabel Setting Khanza</span>
-        </button>
-      </form>
-    </div>
+  <div class="pb-4 mb-4 border-b border-slate-100">
+    <h3 class="text-sm font-semibold text-slate-900">Pratinjau Kop Surat Cetak Laporan &amp; Identitas Aplikasi</h3>
+    <p class="text-xs text-slate-500 mt-0.5">
+      Tampilan di bawah ini adalah pratinjau kop surat resmi saat mencetak laporan serta identitas pada halaman Login &amp; Sidebar:
+      <strong class="text-slate-700"><?= e($appName) ?> — <?= e($rsName) ?></strong>
+    </p>
   </div>
 
   <!-- Kotak Simulasi Kop Surat Cetak -->
