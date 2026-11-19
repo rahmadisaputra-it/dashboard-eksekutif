@@ -261,14 +261,14 @@ class Setup
     }
 
     public static function run(
-        string $host = '127.0.0.1',
-        string $user = 'root',
-        string $pass = '',
-        string $dbName = 'dashboard_eksekutif',
-        string $port = '3306'
+        string $host = Database::DB_HOST,
+        string $user = Database::DB_USER,
+        string $pass = Database::DB_PASS,
+        string $dbName = Database::DB_NAME,
+        string $port = Database::DB_PORT
     ): array {
         $log = [];
-        $safeDb = preg_replace('/[^a-zA-Z0-9_]/', '', $dbName) ?: 'dashboard_eksekutif';
+        $safeDb = preg_replace('/[^a-zA-Z0-9_]/', '', $dbName) ?: Database::DB_NAME;
 
         try {
             $pdoRoot = new PDO("mysql:host={$host};port={$port};charset=utf8mb4", $user, $pass, [
