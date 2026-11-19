@@ -1,6 +1,6 @@
 /* ==========================================================================
-   SIMRS PERMATA — CLEAN ENTERPRISE UI SYSTEM
-   RSU Permata Madina Panyabungan (PHP 8.0.8 Native Modular MVC)
+   DASHBOARD EKSEKUTIF — CLEAN ENTERPRISE UI SYSTEM
+   Author: Rahmadi Saputra (PHP 8.0.8+ Native Modular MVC)
    Zero-Bevel, Zero-Gimmick, High-Craft Professional SaaS Interface
    ========================================================================== */
 
@@ -60,8 +60,13 @@ img {
   background-color: #f8fafc;
 }
 
-/* Sidebar Kiri: Putih Bersih, Garis Batas 1px Halus di Kanan */
+/* Sidebar Kiri: Putih Bersih, Garis Batas 1px Halus di Kanan, Tetap Diam (Sticky) Saat Scroll */
 .permata-sidebar {
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  height: 100vh;
+  overflow-y: auto;
   width: 256px;
   flex-shrink: 0;
   background-color: #ffffff;
@@ -70,6 +75,7 @@ img {
   flex-direction: column;
   justify-content: space-between;
   padding: 24px 16px;
+  z-index: 20;
 }
 
 /* Area Konten Utama Kanan: Bersih, Lega, Fokus ke Data */
@@ -249,6 +255,9 @@ input:-webkit-autofill:focus {
     flex-direction: column;
   }
   .permata-sidebar {
+    position: static;
+    height: auto;
+    overflow-y: visible;
     width: 100%;
     border-right: none;
     border-bottom: 1px solid #e2e8f0;
